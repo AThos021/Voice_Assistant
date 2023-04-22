@@ -4,12 +4,15 @@
 # up down left right movement 
 # Choose according To choice
 # listening with execution
+# call contacts
 
 
 import pyttsx3
 import speech_recognition as sr
-import playsound
-import pyjokes
+import smtplib
+import ssl
+# import playsound
+# import pyjokes
 import wikipedia
 import smtplib
 import webbrowser
@@ -17,7 +20,7 @@ import ecapture as ec
 import pywhatkit
 import pyautogui
 import twilio
-from rembg import remove
+# from rembg import remove
 from PIL import Image
 from translate import Translator
 
@@ -89,18 +92,6 @@ def youTube(text):
         except Exception as e:
             print(e)
 
-# Remove Background
-def removeBackground():
-    try:
-        input_path = 'D:\PythonProject\Opencv\img.jpg'
-        output_path = 'D:\PythonProject\Opencv\.vscode\img.png'
-
-        input = Image.open(input_path)
-        output = remove(input)
-        output.save(output_path)
-    except Exception as e:
-        print(e)
-    
 # Call The Contacts
 # def calling_feature():
 #     try:
@@ -134,13 +125,24 @@ def shutup(time):
         print(e)
 
 # Sending Emails
-def sendMail2someone(sender, password, subject, message):
+def mail2someone(sender_email, receiver_email, password,message):
+    smtp_server = "smtp.gmail.com"
+    port = 587 
+
+    context = ssl.create_default_context()
+
     try:
         speak("Sending Mail in Process")
-        pywhatkit.send_mail(sender, password,subject, message)
+        server = smtplib.SMTP(smtp_server,port)
+        server.ehlo() 
+        server.starttls(context=context)
+        server.ehlo()
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)
     except Exception as e:
         print(e)
-
+    finally:
+        server.quit() 
 
 # Main Function
 def main():
@@ -181,21 +183,16 @@ def main():
 
 
             elif your_input == "send mail":
-                speak("Tell The Sender Details")
-                sender = taking_input()
-                speak("Tell The Password")
-                password = taking_input()
-                speak("Tell the subject")
-                subject = taking_input()
+                speak("Got The Sender Details")
+                sender = 'checkappsandserivices@gmail.com'
+                speak("Got The Password")
+                password = 'oszbhhcooymwtkrc'
+                speak("Enter The Receiver Details")
+                print("Enter The Receiver Details: ")
+                receiver = input()
                 speak("Tell The Message")
                 message = taking_input()
-
-                sendMail2someone()
-
-            elif your_input == "remove background":
-                captureImage()
-                removeBackground()
-
+                mail2someone(sender, receiver, password, message)
 
             elif your_input == "shutdown system":
                 speak("Mention the Specific time after which the System will shut down")
